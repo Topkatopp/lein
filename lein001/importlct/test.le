@@ -1,8 +1,0 @@
-write1("hello world")
-write2("capybara>> ")
-a = write2("hello world>> ")
-if a == "capy":
-    write1("i love capybara")
-else:
-    write1(f"hello {a}")
-write2(">> ")
