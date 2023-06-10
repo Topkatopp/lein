@@ -1,5 +1,20 @@
 import os
+import shutil
 from colorama import *
+
+
+def delete_directory(path):
+    # Iterate over all the files and subdirectories
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            file_path = os.path.join(root, name)
+            os.remove(file_path)  # Delete individual file
+        for name in dirs:
+            dir_path = os.path.join(root, name)
+            os.rmdir(dir_path)  # Delete individual subdirectory
+
+    # Delete the root directory
+    shutil.rmtree(path)
 
 
 start = True
@@ -74,64 +89,53 @@ invalid syntax error""" + Fore.RESET
     elif system.startswith("reimport") == True:
         system = system.replace("reimport ", "", 1)
         try:
-            orf = open(fr"C:\lein001\savele\{system}saved.le", "r")
+            orf = open(fr"..\savele\{system}saved.le", "r")
         except:
             print("file not found")
             continue
         linesaved = orf.read()
         orf.close()
-        sfw = open(fr"C:\lein001\importlct\{system}.le", "w")
+        sfw = open(fr"..\importlct\{system}.le", "w")
         sfw.write(linesaved)
         sfw.close()
-        os.system(fr"del C:\lein001\importedlct\{system}dir\{system}.py")
-        os.system(fr"del C:\lein001\importedlct\{system}dir\contrle.py")
-        os.system(fr"del C:\lein001\savele\{system}saved.le")
-        os.system(fr"del C:\lein001\importedlct\{system}dir\__pycache__\contrle.cpython-311.pyc")
-        try:
-            os.system(fr"del C:\lein001\importedlct\{system}dir\module\__pycache__\random.cpython-311.pyc")
-        except:
-            pass
-        try:
-            os.system(fr"del C:\lein001\importedlct\{system}dir\module\random.py")
-        except:
-            pass
-        os.system(fr"del C:\lein001\importedlct\{system}dir\module\__pycache__\__init__.cpython-311.pyc")
-        os.system(fr"del C:\lein001\importedlct\{system}dir\module\__init__.py")
-        os.system(fr"rmdir del C:\lein001\importedlct\{system}dir\module\__pycache__")
-        os.system(fr"rmdir C:\lein001\importedlct\{system}dir\module")
-        os.system(fr"rmdir C:\lein001\importedlct\{system}dir\__pycache__")
-        os.system(fr"rmdir C:\lein001\importedlct\{system}dir")
-        print("succesfly reimported")
+        delete_directory(f'..\\importedlct\\{system}dir')
+        print(Fore.GREEN + "succesfly reimported" + Fore.RESET)
     elif system.startswith("import") == True:
         system = system.replace("import ", "", 1)
         try:
-            f = open(fr"C:\lein001\importlct\{system}.le", "r")
+            f = open(fr"..\importlct\{system}.le", "r")
             testline = f.read()
         except:
             print("file not found")
             continue
         f.close()
+        os.mkdir(fr"..\importedlct\{system}dir")
+        os.mkdir(fr"..\importedlct\{system}dir\module")
+        if 'imp("random")' in testline or "imp('random')" in testline:
+            with open('..\\module\\random.py', "r") as f:
+                randomcode = f.read()
+            with open(fr'..\importedlct\{system}dir\module\random.py', "w") as fd:
+                fd.write(randomcode)
+                
         lines = testline.splitlines()
         for i, line in enumerate(lines):
             if "imp(" in line:
                 lines[i] += "\nfrom contrle import *"
         code = "\n".join(lines)
 
-        os.mkdir(fr"C:\lein001\importedlct\{system}dir")
-        os.mkdir(fr"..\importedlct\{system}dir\module")
-        wsf = open(fr"C:\lein001\savele\{system}saved.le", "w")
+        wsf = open(fr"..\savele\{system}saved.le", "w")
         wsf.write(testline)
         wsf.close()
-        wf = open(fr"C:\lein001\importedlct\{system}dir\{system}.py", "w")
+        wf = open(fr"..\importedlct\{system}dir\{system}.py", "w")
         wf.write(f"from contrle import *\n{code}")
         wf.close()
-        cntrls = open(fr"C:\lein001\contrlesave\contrle.txt", "r")
+        cntrls = open(fr"..\contrlesave\contrle.txt", "r")
         scntrline = cntrls.read()
         cntrls.close()
-        cntrcr = open(fr"C:\lein001\importedlct\{system}dir\contrle.py", "w")
+        cntrcr = open(fr"..\importedlct\{system}dir\contrle.py", "w")
         cntrcr.write(scntrline)
         cntrcr.close()
-        with open(fr"C:\lein001\importedlct\{system}dir\module\__init__.py", "w") as cremod:
+        with open(fr"..\importedlct\{system}dir\module\__init__.py", "w") as cremod:
             cremod.write("")
-        os.system(fr'del C:\lein001\importlct\{system}.le')
+        os.system(fr'del ..\importlct\{system}.le')
         print("succesfly imported DON'T DELETE contrle.py THAT IS CRITICAL FILE")
